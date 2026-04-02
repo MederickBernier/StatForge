@@ -25,8 +25,8 @@ function StatForge.Init()
     -- Step 4+: register gear events and do initial scan
     if StatForge.GearScanner.Init then StatForge.GearScanner.Init() end
 
-    -- Step 5+: detect spec and hero talent
-    if StatForge.SpecDetector.Detect then StatForge.SpecDetector.Detect() end
+    -- Step 5+: register spec/talent events (first detect fires on PLAYER_ENTERING_WORLD)
+    if StatForge.SpecDetector.Init then StatForge.SpecDetector.Init() end
 
     -- Step 7+: build UI
     if StatForge.MainWindow.Build then StatForge.MainWindow.Build() end
@@ -60,6 +60,10 @@ SlashCmdList["STATFORGE"] = function(msg)
             StatForge.State.ResetSandbox()
             print("|cff00ccffStatForge|r sandbox reset.")
         end
+    elseif cmd == "debug" then
+        if StatForge.SpecDetector.PrintDebugInfo then
+            StatForge.SpecDetector.PrintDebugInfo()
+        end
     else
         print("|cff00ccffStatForge|r commands:")
         print("  /statforge          — Optimizer")
@@ -68,6 +72,7 @@ SlashCmdList["STATFORGE"] = function(msg)
         print("  /statforge import   — Import a setup")
         print("  /statforge export   — Export current setup")
         print("  /statforge reset    — Reset sandbox")
+        print("  /statforge debug    — Print spec detection + sentinel spell check")
     end
 end
 

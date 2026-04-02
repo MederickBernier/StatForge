@@ -3,28 +3,28 @@
 -- Update trigger: new season, major patch, or significant tuning pass.
 --
 -- Fields per entry:
---   specId         Global spec ID from GetSpecializationInfo(). 0 = unknown (new Midnight spec).
---   heroTalent     Stable internal key (lowercase, no spaces/apostrophes)
---   heroTalentName Human-readable display name
---   sentinelNodeId Trait node ID checked via C_Traits.GetNodeInfo() for hero talent detection.
---                  0 = placeholder; populate from C_Traits inspection or Wowpedia per patch.
---   priority       Ordered stat array using internal keys (see StatForge.STAT_KEY_MAP).
---                  Equal-weight stats (e.g. "Mastery = Versatility") are listed in the order
---                  they appear in the source table and treated as sequential by the engine.
---   notes          Optional string: content-type splits, breakpoints, playstyle variants.
+--   specId          Global spec ID from GetSpecializationInfo(). 0 = unknown (new Midnight spec).
+--   heroTalent      Stable internal key (lowercase, no spaces/apostrophes)
+--   heroTalentName  Human-readable display name
+--   sentinelSpellId Spell ID of a spell unique to this hero talent path, checked via
+--                   IsPlayerSpell(). 0 = placeholder; populate from in-game talent node data.
+--   priority        Ordered stat array using internal keys (see StatForge.STAT_KEY_MAP).
+--                   Equal-weight stats (e.g. "Mastery = Versatility") are listed in the order
+--                   they appear in the source table and treated as sequential by the engine.
+--   notes           Optional string: content-type splits, breakpoints, playstyle variants.
 --
 -- Spec IDs reference: https://wowpedia.fandom.com/wiki/SpecializationID
 
 StatForge.SPEC_DATA = {}
 
-local function entry(specId, heroTalent, heroTalentName, sentinelNodeId, priority, notes)
+local function entry(specId, heroTalent, heroTalentName, sentinelSpellId, priority, notes)
     StatForge.SPEC_DATA[#StatForge.SPEC_DATA + 1] = {
-        specId         = specId,
-        heroTalent     = heroTalent,
-        heroTalentName = heroTalentName,
-        sentinelNodeId = sentinelNodeId,
-        priority       = priority,
-        notes          = notes,
+        specId          = specId,
+        heroTalent      = heroTalent,
+        heroTalentName  = heroTalentName,
+        sentinelSpellId = sentinelSpellId,
+        priority        = priority,
+        notes           = notes,
     }
 end
 
@@ -40,107 +40,107 @@ end
 -- Blood 250 | Frost 251 | Unholy 252
 
 -- Blood: Mastery = Versatility at priority 3; San'layn: Mastery = Crit = Versatility at 3
-entry(250, "deathbringer", "Deathbringer", 0,
+entry(250, "deathbringer", "Deathbringer", 439843,
     {"strength","crit","mastery","versatility","haste"})
 
-entry(250, "sanlayan", "San'layn", 0,
+entry(250, "sanlayan", "San'layn", 433901,
     {"strength","haste","mastery","crit","versatility"})
 
 -- Frost: identical priority for both hero talents
-entry(251, "deathbringer", "Deathbringer", 0,
+entry(251, "deathbringer", "Deathbringer", 439843,
     {"strength","crit","mastery","haste","versatility"})
 
-entry(251, "rideroftheapocalypse", "Rider of the Apocalypse", 0,
+entry(251, "rideroftheapocalypse", "Rider of the Apocalypse", 444005,
     {"strength","crit","mastery","haste","versatility"})
 
 -- Unholy: identical priority for both hero talents
-entry(252, "rideroftheapocalypse", "Rider of the Apocalypse", 0,
+entry(252, "rideroftheapocalypse", "Rider of the Apocalypse", 444005,
     {"strength","mastery","crit","haste","versatility"})
 
-entry(252, "sanlayan", "San'layn", 0,
+entry(252, "sanlayan", "San'layn", 433901,
     {"strength","mastery","crit","haste","versatility"})
 
 -- ── Demon Hunter ──────────────────────────────────────────────────────────────
 -- Havoc 577 | Vengeance 581 | Devourer 0 (Midnight new spec — ID unknown)
 
 -- Havoc: identical for both hero talents
-entry(577, "aldrachireaver", "Aldrachi Reaver", 0,
+entry(577, "aldrachireaver", "Aldrachi Reaver", 442290,
     {"agility","crit","mastery","haste","versatility"})
 
-entry(577, "felscarred", "Fel-Scarred", 0,
+entry(577, "felscarred", "Fel-Scarred", 452402,
     {"agility","crit","mastery","haste","versatility"})
 
 -- Vengeance: all secondaries roughly equal; Haste more important for Aldrachi Reaver.
 -- Defensive priority used as default. Offensive: crit > mastery > versatility > haste.
-entry(581, "aldrachireaver", "Aldrachi Reaver", 0,
+entry(581, "aldrachireaver", "Aldrachi Reaver", 442290,
     {"agility","haste","crit","versatility","mastery"},
     "Defensive priority. Offensive variant: agility > crit > mastery > versatility > haste.")
 
-entry(581, "annihilator", "Annihilator", 0,
+entry(581, "annihilator", "Annihilator", 1253304,
     {"agility","haste","crit","versatility","mastery"},
     "Defensive priority. Offensive variant: agility > crit > mastery > versatility > haste.")
 
 -- Devourer: new Midnight spec — caster/support role
-entry(0, "annihilator", "Annihilator", 0,
+entry(0, "annihilator", "Annihilator", 1253304,
     {"intellect","haste","mastery","crit","versatility"})
 
-entry(0, "voidscarred", "Void-Scarred", 0,
+entry(0, "voidscarred", "Void-Scarred", 452402,
     {"intellect","mastery","haste","crit","versatility"})
 
 -- ── Druid ─────────────────────────────────────────────────────────────────────
 -- Balance 102 | Feral 103 | Guardian 104 | Restoration 105
 
 -- Balance: Keeper — Haste = Crit at row 3; Elune's — distinct order
-entry(102, "keeperofthegrove", "Keeper of the Grove", 0,
+entry(102, "keeperofthegrove", "Keeper of the Grove", 433831,
     {"intellect","mastery","haste","crit","versatility"})
 
-entry(102, "eluenschosen", "Elune's Chosen", 0,
+entry(102, "eluenschosen", "Elune's Chosen", 424058,
     {"intellect","mastery","haste","crit","versatility"})
 
 -- Feral: hero talents shift Haste vs Crit at position 3/4
-entry(103, "druidoftheclaw", "Druid of the Claw", 0,
+entry(103, "druidoftheclaw", "Druid of the Claw", 441583,
     {"agility","mastery","haste","crit","versatility"})
 
-entry(103, "wildstalker", "Wildstalker", 0,
+entry(103, "wildstalker", "Wildstalker", 439528,
     {"agility","mastery","crit","haste","versatility"})
 
 -- Guardian: both hero talents share the same priority for both playstyles
-entry(104, "druidoftheclaw", "Druid of the Claw", 0,
+entry(104, "druidoftheclaw", "Druid of the Claw", 441583,
     {"agility","haste","versatility","crit","mastery"})
 
-entry(104, "eluenschosen", "Elune's Chosen", 0,
+entry(104, "eluenschosen", "Elune's Chosen", 424058,
     {"agility","haste","versatility","crit","mastery"})
 
 -- Restoration: same for both hero talents and both content types
-entry(105, "wildstalker", "Wildstalker", 0,
+entry(105, "wildstalker", "Wildstalker", 439528,
     {"intellect","haste","mastery","versatility","crit"})
 
-entry(105, "keeperofthegrove", "Keeper of the Grove", 0,
+entry(105, "keeperofthegrove", "Keeper of the Grove", 433831,
     {"intellect","haste","mastery","versatility","crit"})
 
 -- ── Evoker ────────────────────────────────────────────────────────────────────
 -- Devastation 1467 | Preservation 1468 | Augmentation 1473
 
 -- Devastation: identical for both hero talents
-entry(1467, "flameshaper", "Flameshaper", 0,
+entry(1467, "flameshaper", "Flameshaper", 1264269,
     {"intellect","crit","haste","mastery","versatility"})
 
-entry(1467, "scalecommander", "Scalecommander", 0,
+entry(1467, "scalecommander", "Scalecommander", 436335,
     {"intellect","crit","haste","mastery","versatility"})
 
 -- Preservation: identical for both hero talents (Chronowarden: Crit = Haste in Raid)
-entry(1468, "flameshaper", "Flameshaper", 0,
+entry(1468, "flameshaper", "Flameshaper", 1264269,
     {"intellect","mastery","haste","crit","versatility"})
 
-entry(1468, "chronowarden", "Chronowarden", 0,
+entry(1468, "chronowarden", "Chronowarden", 431442,
     {"intellect","mastery","haste","crit","versatility"},
     "Crit and Haste are equal in Raid.")
 
 -- Augmentation: identical for both hero talents
-entry(1473, "chronowarden", "Chronowarden", 0,
+entry(1473, "chronowarden", "Chronowarden", 431442,
     {"intellect","crit","haste","mastery","versatility"})
 
-entry(1473, "scalecommander", "Scalecommander", 0,
+entry(1473, "scalecommander", "Scalecommander", 436335,
     {"intellect","crit","haste","mastery","versatility"})
 
 -- ── Hunter ────────────────────────────────────────────────────────────────────
@@ -148,50 +148,50 @@ entry(1473, "scalecommander", "Scalecommander", 0,
 
 -- Beast Mastery: ST used as default (Weapon Damage not a tracked stat; agility drives ilvl).
 -- AoE variant shifts Crit above Haste at position 4/5.
-entry(253, "packleader", "Pack Leader", 0,
+entry(253, "packleader", "Pack Leader", 471876,
     {"agility","mastery","haste","crit","versatility"},
     "Single-target priority. AoE variant: agility > mastery > crit > versatility > haste.")
 
-entry(253, "darkranger", "Dark Ranger", 0,
+entry(253, "darkranger", "Dark Ranger", 466930,
     {"agility","mastery","haste","crit","versatility"},
     "Single-target priority. AoE variant: agility > mastery > crit > versatility > haste.")
 
 -- Marksmanship: same for both hero talents
-entry(254, "sentinel", "Sentinel", 0,
+entry(254, "sentinel", "Sentinel", 1253599,
     {"agility","crit","mastery","versatility","haste"})
 
-entry(254, "darkranger", "Dark Ranger", 0,
+entry(254, "darkranger", "Dark Ranger", 466930,
     {"agility","crit","mastery","versatility","haste"})
 
 -- Survival: Crit = Haste at row 3 for Pack Leader
-entry(255, "packleader", "Pack Leader", 0,
+entry(255, "packleader", "Pack Leader", 471876,
     {"agility","mastery","crit","haste","versatility"})
 
-entry(255, "sentinel", "Sentinel", 0,
+entry(255, "sentinel", "Sentinel", 1253599,
     {"agility","mastery","crit","haste","versatility"})
 
 -- ── Mage ──────────────────────────────────────────────────────────────────────
 -- Arcane 62 | Fire 63 | Frost 64
 
 -- Arcane: same for both hero talents
-entry(62, "spellslinger", "Spellslinger", 0,
+entry(62, "spellslinger", "Spellslinger", 443739,
     {"intellect","mastery","haste","crit","versatility"})
 
-entry(62, "sunfury", "Sunfury", 0,
+entry(62, "sunfury", "Sunfury", 448601,
     {"intellect","mastery","haste","crit","versatility"})
 
 -- Fire: same for both hero talents
-entry(63, "sunfury", "Sunfury", 0,
+entry(63, "sunfury", "Sunfury", 448601,
     {"intellect","haste","mastery","versatility","crit"})
 
-entry(63, "frostfire", "Frostfire", 0,
+entry(63, "frostfire", "Frostfire", 431044,
     {"intellect","haste","mastery","versatility","crit"})
 
 -- Frost: same for both hero talents
-entry(64, "frostfire", "Frostfire", 0,
+entry(64, "frostfire", "Frostfire", 431044,
     {"intellect","mastery","crit","haste","versatility"})
 
-entry(64, "spellslinger", "Spellslinger", 0,
+entry(64, "spellslinger", "Spellslinger", 443739,
     {"intellect","mastery","crit","haste","versatility"})
 
 -- ── Monk ──────────────────────────────────────────────────────────────────────
@@ -200,53 +200,53 @@ entry(64, "spellslinger", "Spellslinger", 0,
 -- Brewmaster: both hero talents share priority per playstyle.
 -- Defensive (default for tanks): Versatility = Crit = Mastery at row 2.
 -- Offensive: Crit > Mastery > Versatility > Haste.
-entry(268, "masterofharmony", "Master of Harmony", 0,
+entry(268, "masterofharmony", "Master of Harmony", 450508,
     {"agility","versatility","crit","mastery","haste"},
     "Defensive priority. Offensive variant: agility > crit > mastery > versatility > haste.")
 
-entry(268, "shadopan", "Shado-Pan", 0,
+entry(268, "shadopan", "Shado-Pan", 450615,
     {"agility","versatility","crit","mastery","haste"},
     "Defensive priority. Offensive variant: agility > crit > mastery > versatility > haste.")
 
 -- Mistweaver: same for both hero talents and both content types
-entry(270, "conduitofthecelestials", "Conduit of the Celestials", 0,
+entry(270, "conduitofthecelestials", "Conduit of the Celestials", 123904,
     {"intellect","haste","crit","versatility","mastery"})
 
-entry(270, "masterofharmony", "Master of Harmony", 0,
+entry(270, "masterofharmony", "Master of Harmony", 450508,
     {"intellect","haste","crit","versatility","mastery"})
 
 -- Windwalker: hero talents diverge at position 3/4
-entry(269, "shadopan", "Shado-Pan", 0,
+entry(269, "shadopan", "Shado-Pan", 450615,
     {"agility","haste","crit","mastery","versatility"})
 
-entry(269, "conduitofthecelestials", "Conduit of the Celestials", 0,
+entry(269, "conduitofthecelestials", "Conduit of the Celestials", 123904,
     {"agility","haste","mastery","crit","versatility"})
 
 -- ── Paladin ───────────────────────────────────────────────────────────────────
 -- Holy 65 | Protection 66 | Retribution 70
 
 -- Holy: same for both hero talents; Haste = Crit at row 3
-entry(65, "heraldofthesun", "Herald of the Sun", 0,
+entry(65, "heraldofthesun", "Herald of the Sun", 431377,
     {"intellect","mastery","haste","crit","versatility"})
 
-entry(65, "lightsmith", "Lightsmith", 0,
+entry(65, "lightsmith", "Lightsmith", 432459,
     {"intellect","mastery","haste","crit","versatility"})
 
 -- Protection: both hero talents share priority; survivability used as default.
 -- DPS variant: strength > haste > versatility > crit > mastery.
-entry(66, "lightsmith", "Lightsmith", 0,
+entry(66, "lightsmith", "Lightsmith", 432459,
     {"strength","haste","versatility","mastery","crit"},
     "Survivability priority. DPS variant: strength > haste > versatility > crit > mastery.")
 
-entry(66, "templar", "Templar", 0,
+entry(66, "templar", "Templar", 427445,
     {"strength","haste","versatility","mastery","crit"},
     "Survivability priority. DPS variant: strength > haste > versatility > crit > mastery.")
 
 -- Retribution: same for both hero talents
-entry(70, "templar", "Templar", 0,
+entry(70, "templar", "Templar", 427445,
     {"strength","mastery","crit","haste","versatility"})
 
-entry(70, "heraldofthesun", "Herald of the Sun", 0,
+entry(70, "heraldofthesun", "Herald of the Sun", 431377,
     {"strength","mastery","crit","haste","versatility"})
 
 -- ── Priest ────────────────────────────────────────────────────────────────────
@@ -254,56 +254,56 @@ entry(70, "heraldofthesun", "Herald of the Sun", 0,
 
 -- Discipline: hero talent does not influence priority. Raid used as default.
 -- M+ variant: intellect > haste > crit > versatility > mastery.
-entry(256, "oracle", "Oracle", 0,
+entry(256, "oracle", "Oracle", 1248423,
     {"intellect","haste","crit","mastery","versatility"},
     "Raid priority. M+ variant: intellect > haste > crit > versatility > mastery.")
 
-entry(256, "voidweaver", "Voidweaver", 0,
+entry(256, "voidweaver", "Voidweaver", 263165,
     {"intellect","haste","crit","mastery","versatility"},
     "Raid priority. M+ variant: intellect > haste > crit > versatility > mastery.")
 
 -- Holy: Raid used as default; Versatility = Mastery at row 3.
 -- M+ variant: intellect > versatility > crit > haste > mastery.
-entry(257, "archon", "Archon", 0,
+entry(257, "archon", "Archon", 120644,
     {"intellect","crit","versatility","mastery","haste"},
     "Raid priority. M+ variant: intellect > versatility > crit > haste > mastery.")
 
-entry(257, "oracle", "Oracle", 0,
+entry(257, "oracle", "Oracle", 1248423,
     {"intellect","crit","versatility","mastery","haste"},
     "Raid priority. M+ variant: intellect > versatility > crit > haste > mastery.")
 
 -- Shadow: same for both hero talents
-entry(258, "archon", "Archon", 0,
+entry(258, "archon", "Archon", 120644,
     {"intellect","haste","mastery","crit","versatility"})
 
-entry(258, "voidweaver", "Voidweaver", 0,
+entry(258, "voidweaver", "Voidweaver", 263165,
     {"intellect","haste","mastery","crit","versatility"})
 
 -- ── Rogue ─────────────────────────────────────────────────────────────────────
 -- Assassination 259 | Outlaw 260 | Subtlety 261
 
 -- Assassination: same for both hero talents
-entry(259, "deathstalker", "Deathstalker", 0,
+entry(259, "deathstalker", "Deathstalker", 457052,
     {"agility","crit","haste","mastery","versatility"})
 
-entry(259, "fatebound", "Fatebound", 0,
+entry(259, "fatebound", "Fatebound", 452536,
     {"agility","crit","haste","mastery","versatility"})
 
 -- Outlaw: same for both hero talents; note 25% Haste soft-cap
-entry(260, "fatebound", "Fatebound", 0,
+entry(260, "fatebound", "Fatebound", 452536,
     {"agility","haste","crit","versatility","mastery"},
     "Aim for ~25% Haste before prioritising other secondaries.")
 
-entry(260, "trickster", "Trickster", 0,
+entry(260, "trickster", "Trickster", 441146,
     {"agility","haste","crit","versatility","mastery"},
     "Aim for ~25% Haste before prioritising other secondaries.")
 
 -- Subtlety: same for both hero talents and both target counts; ~18% Haste breakpoint
-entry(261, "deathstalker", "Deathstalker", 0,
+entry(261, "deathstalker", "Deathstalker", 457052,
     {"agility","mastery","haste","crit","versatility"},
     "~18% Haste is a soft breakpoint. Priority is the same for ST and M+.")
 
-entry(261, "trickster", "Trickster", 0,
+entry(261, "trickster", "Trickster", 441146,
     {"agility","mastery","haste","crit","versatility"},
     "~18% Haste is a soft breakpoint. Priority is the same for ST and M+.")
 
@@ -312,75 +312,75 @@ entry(261, "trickster", "Trickster", 0,
 
 -- Elemental: Mastery to 1200 rating is a hard breakpoint target (see Breakpoints path).
 -- Haste = Crit after breakpoint. Intellect appears at position 4 in source table.
-entry(262, "farseer", "Farseer", 0,
+entry(262, "farseer", "Farseer", 443450,
     {"mastery","haste","crit","versatility","intellect"},
     "Mastery to 1200 rating is a breakpoint. Use the Breakpoints optimisation path to track this.")
 
-entry(262, "stormbringer", "Stormbringer", 0,
+entry(262, "stormbringer", "Stormbringer", 454009,
     {"mastery","haste","crit","versatility","intellect"},
     "Mastery to 1200 rating is a breakpoint. Use the Breakpoints optimisation path to track this.")
 
 -- Enhancement: hero talents diverge at position 2/3
-entry(263, "stormbringer", "Stormbringer", 0,
+entry(263, "stormbringer", "Stormbringer", 454009,
     {"agility","haste","mastery","crit","versatility"})
 
-entry(263, "totemic", "Totemic", 0,
+entry(263, "totemic", "Totemic", 444995,
     {"agility","mastery","haste","crit","versatility"})
 
 -- Restoration: same for both hero talents; Mastery = Versatility at row 3
-entry(264, "farseer", "Farseer", 0,
+entry(264, "farseer", "Farseer", 443450,
     {"intellect","crit","mastery","versatility","haste"})
 
-entry(264, "totemic", "Totemic", 0,
+entry(264, "totemic", "Totemic", 444995,
     {"intellect","crit","mastery","versatility","haste"})
 
 -- ── Warlock ───────────────────────────────────────────────────────────────────
 -- Affliction 265 | Demonology 266 | Destruction 267
 
 -- Affliction: same for both hero talents; Mastery = Crit at row 2
-entry(265, "hellcaller", "Hellcaller", 0,
+entry(265, "hellcaller", "Hellcaller", 445468,
     {"intellect","mastery","crit","haste","versatility"})
 
-entry(265, "soalharvester", "Soul Harvester", 0,
+entry(265, "soalharvester", "Soul Harvester", 449614,
     {"intellect","mastery","crit","haste","versatility"})
 
 -- Demonology: same for both hero talents; Haste = Crit at row 2
-entry(266, "diabolist", "Diabolist", 0,
+entry(266, "diabolist", "Diabolist", 428514,
     {"intellect","haste","crit","mastery","versatility"})
 
-entry(266, "soalharvester", "Soul Harvester", 0,
+entry(266, "soalharvester", "Soul Harvester", 449614,
     {"intellect","haste","crit","mastery","versatility"})
 
 -- Destruction: same for both hero talents; Mastery = Crit at row 3
-entry(267, "diabolist", "Diabolist", 0,
+entry(267, "diabolist", "Diabolist", 428514,
     {"intellect","haste","mastery","crit","versatility"})
 
-entry(267, "hellcaller", "Hellcaller", 0,
+entry(267, "hellcaller", "Hellcaller", 445468,
     {"intellect","haste","mastery","crit","versatility"})
 
 -- ── Warrior ───────────────────────────────────────────────────────────────────
 -- Arms 71 | Fury 72 | Protection 73
 
 -- Arms: same for both hero talents
-entry(71, "colossus", "Colossus", 0,
+entry(71, "colossus", "Colossus", 436358,
     {"strength","crit","haste","mastery","versatility"})
 
-entry(71, "slayer", "Slayer", 0,
+entry(71, "slayer", "Slayer", 444767,
     {"strength","crit","haste","mastery","versatility"})
 
 -- Fury: same for both hero talents
-entry(72, "mountainthane", "Mountain Thane", 0,
+entry(72, "mountainthane", "Mountain Thane", 434969,
     {"strength","haste","mastery","crit","versatility"})
 
-entry(72, "slayer", "Slayer", 0,
+entry(72, "slayer", "Slayer", 444767,
     {"strength","haste","mastery","crit","versatility"})
 
 -- Protection: both hero talents share priority per playstyle; survivability as default.
 -- DPS variant: strength > haste > crit > versatility > mastery (same as survivability here).
-entry(73, "colossus", "Colossus", 0,
+entry(73, "colossus", "Colossus", 436358,
     {"strength","haste","crit","versatility","mastery"})
 
-entry(73, "mountainthane", "Mountain Thane", 0,
+entry(73, "mountainthane", "Mountain Thane", 434969,
     {"strength","haste","crit","versatility","mastery"})
 
 -- ── Post-load index ───────────────────────────────────────────────────────────
