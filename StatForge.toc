@@ -1,0 +1,25 @@
+## Interface: 120000, 120001, 120005
+## Title: StatForge
+## Notes: Stat optimization sandbox — gear, gems, enchants, consumables
+## Author:
+## Version: 1.0.0
+## SavedVariables: StatForgeDB
+## AddonCompartmentFunc: StatForge_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: StatForge_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: StatForge_OnAddonCompartmentLeave
+
+Core\Constants.lua
+Core\State.lua
+Data\SpecData.lua
+Modules\GearScanner.lua
+Modules\StatEngine.lua
+Modules\SpecDetector.lua
+Modules\ShoppingList.lua
+Modules\ImportExport.lua
+UI\MainWindow.lua
+UI\OptimizerTab.lua
+UI\SetupsTab.lua
+UI\ShoppingListTab.lua
+UI\ImportExportTab.lua
+UI\MinimapButton.lua
+StatForge.lua
