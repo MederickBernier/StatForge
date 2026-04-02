@@ -22,8 +22,8 @@ function StatForge.Init()
     -- Step 2+: State.Init() will set up SavedVariables
     if StatForge.State.Init then StatForge.State.Init() end
 
-    -- Step 4+: scan gear on load
-    if StatForge.GearScanner.Scan then StatForge.GearScanner.Scan() end
+    -- Step 4+: register gear events and do initial scan
+    if StatForge.GearScanner.Init then StatForge.GearScanner.Init() end
 
     -- Step 5+: detect spec and hero talent
     if StatForge.SpecDetector.Detect then StatForge.SpecDetector.Detect() end

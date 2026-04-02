@@ -32,6 +32,11 @@ local function FireChange(reason)
     end
 end
 
+-- Public wrapper so other modules (GearScanner, SpecDetector) can fire observers
+function State.NotifyChange(reason)
+    FireChange(reason)
+end
+
 -- ── Init ──────────────────────────────────────────────────────────────────────
 
 function State.Init()

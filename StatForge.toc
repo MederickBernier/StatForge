@@ -11,6 +11,7 @@
 Core\Constants.lua
 Core\State.lua
 Data\SpecData.lua
+Data\AppliedData.lua
 Modules\GearScanner.lua
 Modules\StatEngine.lua
 Modules\SpecDetector.lua
