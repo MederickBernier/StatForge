@@ -65,7 +65,7 @@ function StatEngine.Calculate(sandbox, gearData)
             -- Fallback: re-query stats from the link directly if not found in cache
             if not item then
                 local stats = {}
-                GetItemStats(overrideLink, stats)
+                C_Item.GetItemStats(overrideLink, stats)
                 item = { stats = stats }
             end
         else

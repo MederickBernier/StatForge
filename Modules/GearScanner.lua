@@ -65,7 +65,7 @@ local function BuildItemRecord(link, slotKey)
     if not link or link == "" then return nil end
 
     local stats = {}
-    GetItemStats(link, stats)
+    C_Item.GetItemStats(link, stats)
 
     local hasEmpty   = HasEmptySocket(stats)
     local enchantId  = GetEnchantIdFromLink(link)
